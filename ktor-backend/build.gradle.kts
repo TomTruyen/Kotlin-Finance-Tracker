@@ -5,12 +5,13 @@ val logback_version: String by project
 plugins {
     kotlin("jvm") version "1.8.10"
     id("io.ktor.plugin") version "2.2.4"
+    kotlin("plugin.serialization") version "1.8.10"
 }
 
-group = "tomtruyen.com"
+group = "com.tomtruyen"
 version = "0.0.1"
 application {
-    mainClass.set("tomtruyen.com.ApplicationKt")
+    mainClass.set("com.tomtruyen.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -25,8 +26,17 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
 
-    // Authentication KTOR
+    // KTOR Authentication
     implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+
+    // KTOR Content Negotiation
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+
+    // KTOR Serialization
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
 
     // KTOR Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")

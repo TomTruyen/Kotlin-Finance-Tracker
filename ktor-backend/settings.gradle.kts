@@ -1,0 +1,1 @@
+rootProject.name = "tomtruyen.com.ktor-backend"

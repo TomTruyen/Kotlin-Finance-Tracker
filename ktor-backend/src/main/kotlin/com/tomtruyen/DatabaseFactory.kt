@@ -1,5 +1,6 @@
 package com.tomtruyen
 
+import com.tomtruyen.data.table.CategoryTable
 import com.tomtruyen.data.table.UserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -16,6 +17,7 @@ object DatabaseFactory {
 
         transaction {
             SchemaUtils.create(UserTable)
+            SchemaUtils.create(CategoryTable)
         }
     }
 

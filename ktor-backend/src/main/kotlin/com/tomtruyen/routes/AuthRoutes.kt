@@ -10,6 +10,7 @@ import com.tomtruyen.security.hashing.SaltedHash
 import com.tomtruyen.security.token.TokenConfig
 import com.tomtruyen.security.token.TokenService
 import com.tomtruyen.security.token.TokenClaim
+import com.tomtruyen.security.token.USER_ID_CLAIM
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -44,7 +45,7 @@ fun Route.register(hashingService: HashingService) {
             salt = saltedHash.salt,
         )
 
-        UserRepository.addUser(user)
+        UserRepository.createUser(user)
 
         call.respond(HttpStatusCode.OK)
     }
@@ -84,7 +85,7 @@ fun Route.login(
         val token = tokenService.generate(
             config = tokenConfig,
             TokenClaim(
-                name = "id",
+                name = USER_ID_CLAIM,
                 value = user.id.toString()
             )
         )

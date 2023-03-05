@@ -1,4 +1,4 @@
-package com.tomtruyen.models.response
+package com.tomtruyen.data.responses
 
 import kotlinx.serialization.Serializable
 

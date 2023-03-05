@@ -1,41 +1,27 @@
 package com.tomtruyen.plugins
 
+import com.tomtruyen.routes.authenticate
+import com.tomtruyen.routes.login
+import com.tomtruyen.routes.register
+import com.tomtruyen.security.hashing.HashingService
+import com.tomtruyen.security.token.TokenConfig
+import com.tomtruyen.security.token.TokenService
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
-import com.tomtruyen.models.User
-import com.tomtruyen.models.response.AuthResponse
-import com.tomtruyen.utils.AuthUtils
 
-fun Application.configureRouting() {
+fun Application.configureRouting(
+    tokenService: TokenService,
+    tokenConfig: TokenConfig,
+    hashingService: HashingService
+) {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
+        login(tokenService, tokenConfig, hashingService)
+        register(hashingService)
+        authenticate()
 
-        // Authentication
-        post("/login") {
-            val user = call.receive<User>()
+        // TODO: Add refresh tokens functionality (on an Unauthorized response, try a call to /refresh to get a new token), if failed --> redirect to login
+        // TODO: Clear tokens of user on logout
 
-            // TODO: Check user in database
-
-            val token = AuthUtils.generateToken(user)
-
-            call.respond(AuthResponse(token))
-        }
-
-        authenticate("auth-jwt") {
-            get("/auth") {
-                val principal = call.principal<JWTPrincipal>()
-
-                val email = principal?.payload?.getClaim("email")?.asString()
-                val expiresAt = principal?.expiresAt?.time?.minus(System.currentTimeMillis())
-
-                call.respondText("Hello $email! Your token expires in $expiresAt ms")
-            }
-        }
     }
 }

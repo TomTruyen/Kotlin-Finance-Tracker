@@ -1,10 +1,9 @@
-package com.tomtruyen.models
+package com.tomtruyen.data.requests
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class User(
+data class AuthRequest(
     val email: String,
     val password: String
 )

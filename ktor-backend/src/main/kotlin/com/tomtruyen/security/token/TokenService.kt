@@ -1,8 +1,11 @@
 package com.tomtruyen.security.token
 
+import java.util.UUID
+
 interface TokenService {
-    fun generate(
+    suspend fun generate(
         config: TokenConfig,
-        vararg claims: TokenClaim
-    ): String
+        userId: UUID,
+        isUpdate: Boolean = false
+    ): TokenPair
 }

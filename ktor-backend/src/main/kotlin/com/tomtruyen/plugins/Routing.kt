@@ -18,12 +18,12 @@ fun Application.configureRouting(
         // Authentication
         login(tokenService, tokenConfig, hashingService)
         register(hashingService)
-        authenticate()
-
-        // TODO: Add refresh tokens functionality (on an Unauthorized response, try a call to /refresh to get a new token), if failed --> redirect to login
-        // TODO: Clear tokens of user on logout
+        refreshToken(tokenService, tokenConfig)
 
         authenticate {
+            // Logout
+            logout()
+
             // Categories
             getCategories()
             createCategory()

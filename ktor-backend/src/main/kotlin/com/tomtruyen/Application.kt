@@ -17,6 +17,7 @@ fun Application.module() {
         issuer = environment.config.property("jwt.issuer").getString(),
         audience = environment.config.property("jwt.audience").getString(),
         expiresIn = 86400000L, // 1 day
+        refreshExpiresIn = 604800000L, // 1 week
         secret = environment.config.property("jwt.secret").getString(),
     )
 

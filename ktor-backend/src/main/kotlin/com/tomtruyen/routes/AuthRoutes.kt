@@ -1,16 +1,18 @@
 package com.tomtruyen.routes
 
 import com.tomtruyen.data.model.User
+import com.tomtruyen.data.model.toRefreshToken
 import com.tomtruyen.data.requests.AuthRequest
+import com.tomtruyen.data.requests.RefreshTokenRequest
 import com.tomtruyen.data.responses.ErrorResponse
-import com.tomtruyen.data.responses.AuthResponse
+import com.tomtruyen.data.table.TokenTable
+import com.tomtruyen.plugins.TokenRepository
 import com.tomtruyen.security.hashing.HashingService
 import com.tomtruyen.repositories.UserRepository
 import com.tomtruyen.security.hashing.SaltedHash
 import com.tomtruyen.security.token.TokenConfig
 import com.tomtruyen.security.token.TokenService
-import com.tomtruyen.security.token.TokenClaim
-import com.tomtruyen.security.token.USER_ID_CLAIM
+import com.tomtruyen.utils.getUserId
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -18,6 +20,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.apache.commons.validator.routines.EmailValidator
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 fun Route.register(hashingService: HashingService) {
     post("register") {
@@ -82,23 +89,51 @@ fun Route.login(
             return@post
         }
 
-        val token = tokenService.generate(
+        val tokenPair = tokenService.generate(
             config = tokenConfig,
-            TokenClaim(
-                name = USER_ID_CLAIM,
-                value = user.id.toString()
-            )
+            userId = user.id,
         )
 
-        call.respond(HttpStatusCode.OK, AuthResponse(token))
+        call.respond(HttpStatusCode.OK, tokenPair)
     }
 }
 
-// Used on startup of client application to check if token is still valid
-fun Route.authenticate() {
-    authenticate {
-        get("authenticate") {
-            call.respond(HttpStatusCode.OK)
+fun Route.logout() {
+    post("logout") {
+        val userId = call.getUserId()
+
+        TokenRepository.deleteToken(userId)
+
+        call.respond(HttpStatusCode.OK)
+    }
+}
+
+fun Route.refreshToken(
+    tokenService: TokenService,
+    tokenConfig: TokenConfig,
+) {
+    post("refresh") {
+        val oldRefreshToken = call.receive<RefreshTokenRequest>().refreshToken
+
+        val token = TokenRepository.findByRefreshToken(oldRefreshToken)
+
+        val currentTime = System.currentTimeMillis()
+        if(token != null && token.expiresAt > currentTime) {
+            val tokenPair = tokenService.generate(
+                config = tokenConfig,
+                userId = token.userId,
+                isUpdate = true
+            )
+
+            TokenRepository.updateToken(
+                tokenPair = tokenPair,
+                userId = token.userId,
+                expiresAt = System.currentTimeMillis() + tokenConfig.refreshExpiresIn
+            )
+
+            call.respond(HttpStatusCode.OK, tokenPair)
+        } else {
+            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Invalid refresh token"))
         }
     }
 }

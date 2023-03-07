@@ -1,12 +1,10 @@
 package com.tomtruyen.routes
 
 import com.tomtruyen.data.model.User
-import com.tomtruyen.data.model.toRefreshToken
 import com.tomtruyen.data.requests.AuthRequest
 import com.tomtruyen.data.requests.RefreshTokenRequest
 import com.tomtruyen.data.responses.ErrorResponse
-import com.tomtruyen.data.table.TokenTable
-import com.tomtruyen.plugins.TokenRepository
+import com.tomtruyen.repositories.TokenRepository
 import com.tomtruyen.security.hashing.HashingService
 import com.tomtruyen.repositories.UserRepository
 import com.tomtruyen.security.hashing.SaltedHash
@@ -15,16 +13,10 @@ import com.tomtruyen.security.token.TokenService
 import com.tomtruyen.utils.getUserId
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.apache.commons.validator.routines.EmailValidator
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 fun Route.register(hashingService: HashingService) {
     post("register") {

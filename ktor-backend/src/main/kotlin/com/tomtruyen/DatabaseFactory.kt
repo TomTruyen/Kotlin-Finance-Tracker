@@ -2,6 +2,7 @@ package com.tomtruyen
 
 import com.tomtruyen.data.table.CategoryTable
 import com.tomtruyen.data.table.TokenTable
+import com.tomtruyen.data.table.TransactionTable
 import com.tomtruyen.data.table.UserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -20,6 +21,7 @@ object DatabaseFactory {
             SchemaUtils.create(UserTable)
             SchemaUtils.create(TokenTable)
             SchemaUtils.create(CategoryTable)
+            SchemaUtils.create(TransactionTable)
         }
     }
 

@@ -1,7 +1,6 @@
-package com.tomtruyen.plugins
+package com.tomtruyen.repositories
 
 import com.tomtruyen.DatabaseFactory.dbQuery
-import com.tomtruyen.data.model.RefreshToken
 import com.tomtruyen.data.model.toRefreshToken
 import com.tomtruyen.data.table.TokenTable
 import com.tomtruyen.security.token.TokenPair
@@ -9,7 +8,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
 

@@ -2,15 +2,8 @@ package com.tomtruyen.security.token
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.tomtruyen.DatabaseFactory.dbQuery
-import com.tomtruyen.data.table.TokenTable
-import com.tomtruyen.plugins.TokenRepository
+import com.tomtruyen.repositories.TokenRepository
 import com.tomtruyen.security.hashing.SHA256HashingService
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.pbkdf2.SHA256Digest
 import java.util.*
 
 class JwtTokenService: TokenService {

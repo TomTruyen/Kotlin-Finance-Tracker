@@ -21,15 +21,10 @@ fun Route.createCategory() {
             return@post
         }
 
-        if(request.name.isBlank()) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Category name cannot be empty"))
-            return@post
-        }
-
-        // Check if CategoryType enum contains the type
-        val isTypeValid = CategoryType.values().any { it.type == request.type }
-        if(!isTypeValid) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Invalid category type"))
+        try {
+            request.validate()
+        } catch (e: IllegalArgumentException) {
+            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: ""))
             return@post
         }
 
@@ -61,15 +56,10 @@ fun Route.updateCategory() {
             return@put
         }
 
-        if(request.name.isBlank()) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Category name cannot be empty"))
-            return@put
-        }
-
-        // Check if CategoryType enum contains the type
-        val isTypeValid = CategoryType.values().any { it.type == request.type }
-        if(!isTypeValid) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Invalid category type"))
+        try {
+            request.validate()
+        } catch (e: IllegalArgumentException) {
+            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: ""))
             return@put
         }
 
@@ -88,7 +78,7 @@ fun Route.deleteCategory() {
     delete("categories/{id}") {
         val categoryId = call.parameters["id"]
 
-        if(categoryId == null) {
+        if(categoryId.isNullOrBlank()) {
             call.respond(HttpStatusCode.BadRequest, ErrorResponse("Category id is required"))
             return@delete
         }

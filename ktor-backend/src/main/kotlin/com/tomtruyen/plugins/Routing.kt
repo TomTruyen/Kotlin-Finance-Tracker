@@ -29,6 +29,12 @@ fun Application.configureRouting(
             createCategory()
             updateCategory()
             deleteCategory()
+
+            // Transactions
+            getTransactions()
+            createTransaction()
+            updateTransaction()
+            deleteTransaction()
         }
     }
 }
